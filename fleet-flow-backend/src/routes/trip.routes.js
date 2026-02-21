@@ -13,7 +13,7 @@ router.use(authenticate);
 
 router.get('/', getAllTrips);
 router.post('/', authorize('FLEET_MANAGER', 'DISPATCHER'), createTrip);
-router.patch('/:id/dispatch', authorize('FLEET_MANAGER', 'DISPATCHER'), dispatchTrip);
-router.patch('/:id/complete', authorize('FLEET_MANAGER', 'DISPATCHER'), completeTrip);
+router.put('/:id/dispatch', authorize('FLEET_MANAGER', 'DISPATCHER'), dispatchTrip);
+router.put('/:id/complete', authorize('FLEET_MANAGER', 'DISPATCHER'), completeTrip);
 
 module.exports = router;

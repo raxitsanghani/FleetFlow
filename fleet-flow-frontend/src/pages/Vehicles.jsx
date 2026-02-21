@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Plus, Search, MoreVertical, Filter } from 'lucide-react';
 import api from '../api/api';
+import VehicleModal from '../components/VehicleModal';
 
 const statusColors = {
     AVAILABLE: 'bg-green-100 text-green-700',
@@ -12,12 +13,14 @@ const statusColors = {
 const Vehicles = () => {
     const [vehicles, setVehicles] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         fetchVehicles();
     }, []);
 
     const fetchVehicles = async () => {
+        setLoading(true);
         try {
             const { data } = await api.get('/vehicles');
             setVehicles(data);
@@ -35,11 +38,20 @@ const Vehicles = () => {
                     <h1 className="text-2xl font-bold text-slate-900">Vehicle Registry</h1>
                     <p className="text-slate-500">Manage your fleet assets and status</p>
                 </div>
-                <button className="bg-primary-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-primary-700 transition-colors">
+                <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="bg-primary-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-primary-700 transition-colors"
+                >
                     <Plus size={20} />
                     <span>Add Vehicle</span>
                 </button>
             </div>
+
+            <VehicleModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onRefresh={fetchVehicles}
+            />
 
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                 <div className="p-4 border-b border-slate-100 flex items-center justify-between">

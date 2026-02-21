@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const prisma = require('../config/db');
+const User = require('../models/User');
 
 const authenticate = async (req, res, next) => {
     try {
@@ -11,10 +11,7 @@ const authenticate = async (req, res, next) => {
         const token = authHeader.split(' ')[1];
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        const user = await prisma.user.findUnique({
-            where: { id: decoded.id },
-            select: { id: true, email: true, role: true, name: true }
-        });
+        const user = await User.findById(decoded.id).select('email role name');
 
         if (!user) {
             return res.status(401).json({ error: 'Invalid token. User not found.' });
@@ -30,6 +27,7 @@ const authenticate = async (req, res, next) => {
 const authorize = (...roles) => {
     return (req, res, next) => {
         if (!roles.includes(req.user.role)) {
+            console.warn(`[Auth] Access denied for ${req.user.email}. Role: ${req.user.role}, Required: ${roles.join(', ')}`);
             return res.status(403).json({ error: 'Access denied. Insufficient permissions.' });
         }
         next();
