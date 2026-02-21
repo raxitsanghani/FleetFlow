@@ -111,6 +111,8 @@ const Maintenance = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingLog, setEditingLog] = useState(null);
     const [deletingLog, setDeletingLog] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filterVehicle, setFilterVehicle] = useState('ALL');
 
     useEffect(() => {
         fetchLogs();
@@ -145,6 +147,18 @@ const Maintenance = () => {
             toast.error(err.response?.data?.error || 'Failed to delete record');
         }
     };
+
+    const filteredLogs = logs.filter(log => {
+        const matchesSearch =
+            (log.vehicle?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (log.vehicle?.licensePlate || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+            log.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (log.uid && log.uid.toLowerCase().includes(searchTerm.toLowerCase()));
+        const matchesVehicle = filterVehicle === 'ALL' || log.vehicle?._id === filterVehicle;
+        return matchesSearch && matchesVehicle;
+    });
+
+    const uniqueVehicles = Array.from(new Map(logs.map(log => [log.vehicle?._id, log.vehicle])).values()).filter(Boolean);
 
     return (
         <div className="space-y-6">
@@ -181,8 +195,8 @@ const Maintenance = () => {
                         <Wrench size={24} />
                     </div>
                     <div>
-                        <p className="text-sm font-medium text-slate-500">Total Services</p>
-                        <p className="text-2xl font-bold text-slate-900">{logs.length}</p>
+                        <p className="text-sm font-medium text-slate-500">Filtered Services</p>
+                        <p className="text-2xl font-bold text-slate-900">{filteredLogs.length}</p>
                     </div>
                 </div>
                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
@@ -190,9 +204,9 @@ const Maintenance = () => {
                         <DollarSign size={24} />
                     </div>
                     <div>
-                        <p className="text-sm font-medium text-slate-500">Combined Cost</p>
+                        <p className="text-sm font-medium text-slate-500">Filtered Cost</p>
                         <p className="text-2xl font-bold text-slate-900">
-                            ${logs.reduce((sum, log) => sum + log.cost, 0).toLocaleString()}
+                            ${filteredLogs.reduce((sum, log) => sum + log.cost, 0).toLocaleString()}
                         </p>
                     </div>
                 </div>
@@ -210,25 +224,40 @@ const Maintenance = () => {
             </div>
 
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-                    <div className="relative">
+                <div className="p-4 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="relative flex-1 max-w-md">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                         <input
                             type="text"
-                            placeholder="Search logs..."
-                            className="pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500"
+                            placeholder="Search by vehicle, description or ID..."
+                            className="w-full pl-10 pr-4 py-2 text-gray-700 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
-                    <button className="flex items-center space-x-2 text-slate-500 text-sm hover:text-slate-900 transition-colors">
-                        <Filter size={18} />
-                        <span>Filters</span>
-                    </button>
+                    <div className="flex items-center space-x-3">
+                        <div className="flex items-center space-x-2 text-slate-500 text-sm">
+                            <Filter size={18} />
+                            <span>Vehicle:</span>
+                        </div>
+                        <select
+                            className="text-sm border border-slate-200 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-primary-500 bg-white font-medium text-slate-700"
+                            value={filterVehicle}
+                            onChange={(e) => setFilterVehicle(e.target.value)}
+                        >
+                            <option value="ALL">All Vehicles</option>
+                            {uniqueVehicles.map(v => (
+                                <option key={v._id} value={v._id}>{v.name}</option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
 
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
                         <thead className="bg-slate-50 border-b border-slate-100">
                             <tr>
+                                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase text-nowrap">ID</th>
                                 <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase text-nowrap">Vehicle</th>
                                 <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase text-nowrap">Description</th>
                                 <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase text-nowrap">Cost</th>
@@ -238,11 +267,16 @@ const Maintenance = () => {
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                             {loading ? (
-                                <tr><td colSpan="5" className="px-6 py-10 text-center text-slate-500 italic">Loading service records...</td></tr>
-                            ) : logs.length === 0 ? (
-                                <tr><td colSpan="5" className="px-6 py-10 text-center text-slate-500 italic">No maintenance history found</td></tr>
-                            ) : logs.map((log) => (
+                                <tr><td colSpan="6" className="px-6 py-10 text-center text-slate-500 italic">Loading service records...</td></tr>
+                            ) : filteredLogs.length === 0 ? (
+                                <tr><td colSpan="6" className="px-6 py-10 text-center text-slate-500 italic">No maintenance history match your search/filters</td></tr>
+                            ) : filteredLogs.map((log) => (
                                 <tr key={log._id} className="hover:bg-slate-50 transition-colors">
+                                    <td className="px-6 py-4">
+                                        <span className="text-[10px] font-mono text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded leading-none uppercase">
+                                            {log.uid || log._id.slice(-6)}
+                                        </span>
+                                    </td>
                                     <td className="px-6 py-4">
                                         <div>
                                             <p className="font-semibold text-slate-900">{log.vehicle?.name || 'Unknown'}</p>

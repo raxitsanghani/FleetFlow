@@ -1,5 +1,6 @@
 const Vehicle = require('../models/Vehicle');
 const Maintenance = require('../models/Maintenance');
+const { generateUID } = require('../utils/idGenerator');
 
 const getAllVehicles = async (req, res) => {
     try {
@@ -53,6 +54,7 @@ const createVehicle = async (req, res) => {
         }
 
         const vehicle = await Vehicle.create({
+            uid: generateUID('VEH'),
             name, licensePlate, type, maxCapacity, odometer, acquisitionCost
         });
         res.status(201).json(vehicle);
@@ -65,8 +67,26 @@ const updateVehicle = async (req, res) => {
     try {
         const { id } = req.params;
         const data = req.body;
-        const vehicle = await Vehicle.findByIdAndUpdate(id, data, { new: true });
-        res.json(vehicle);
+
+        const vehicle = await Vehicle.findById(id);
+        if (!vehicle) return res.status(404).json({ error: 'Vehicle not found' });
+
+        // Enforce Status Rules
+        if (data.status && data.status !== vehicle.status) {
+            const allowedManual = {
+                'AVAILABLE': ['RETIRED'],
+                'RETIRED': ['AVAILABLE']
+            };
+            const allowed = allowedManual[vehicle.status] || [];
+            if (!allowed.includes(data.status)) {
+                return res.status(400).json({
+                    error: `Cannot manually set status to ${data.status}. This status is managed by Trip/Maintenance modules.`
+                });
+            }
+        }
+
+        const updated = await Vehicle.findByIdAndUpdate(id, data, { new: true });
+        res.json(updated);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }

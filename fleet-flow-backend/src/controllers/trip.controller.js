@@ -3,10 +3,11 @@ const Vehicle = require('../models/Vehicle');
 const Driver = require('../models/Driver');
 const FuelLog = require('../models/FuelLog');
 const mongoose = require('mongoose');
+const { generateUID } = require('../utils/idGenerator');
 
 const createTrip = async (req, res) => {
     try {
-        const { vehicleId, driverId, startOdometer, cargoWeight } = req.body;
+        const { vehicleId, driverId, startOdometer, cargoWeight, origin, destination } = req.body;
 
         const vehicle = await Vehicle.findById(vehicleId);
         if (!vehicle || vehicle.status !== 'AVAILABLE') {
@@ -22,7 +23,15 @@ const createTrip = async (req, res) => {
             return res.status(400).json({ error: 'Driver is not on duty' });
         }
 
-        const trip = await Trip.create({ vehicleId, driverId, startOdometer, cargoWeight });
+        const trip = await Trip.create({
+            uid: generateUID('TRP'),
+            vehicleId,
+            driverId,
+            startOdometer,
+            cargoWeight,
+            origin,
+            destination
+        });
         res.status(201).json(trip);
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -88,6 +97,7 @@ const completeTrip = async (req, res) => {
         if (fuelLiters && fuelCost) {
             try {
                 await FuelLog.create({
+                    uid: generateUID('FUE'),
                     vehicleId: trip.vehicleId,
                     tripId: trip._id,
                     liters: Number(fuelLiters),
@@ -95,7 +105,7 @@ const completeTrip = async (req, res) => {
                     date: new Date()
                 });
             } catch (fuelErr) {
-                console.error('FuelLog creation failed:', fuelErr.message);
+                console.error('FuelLog creation failed during trip completion:', fuelErr.message);
             }
         }
 

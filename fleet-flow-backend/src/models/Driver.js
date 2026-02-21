@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const driverSchema = new mongoose.Schema({
+    uid: { type: String, unique: true },
     name: { type: String, required: true },
     licenseNumber: { type: String, required: true, unique: true },
     licenseExpiry: { type: Date, required: true },

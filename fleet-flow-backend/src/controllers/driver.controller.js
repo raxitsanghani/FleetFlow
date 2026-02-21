@@ -1,4 +1,5 @@
 const Driver = require('../models/Driver');
+const { generateUID } = require('../utils/idGenerator');
 
 const getAllDrivers = async (req, res) => {
     try {
@@ -30,6 +31,7 @@ const createDriver = async (req, res) => {
         }
 
         const driver = await Driver.create({
+            uid: generateUID('DRV'),
             name,
             licenseNumber,
             licenseExpiry: new Date(licenseExpiry),

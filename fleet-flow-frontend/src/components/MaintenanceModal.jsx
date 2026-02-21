@@ -108,7 +108,9 @@ const MaintenanceModal = ({ isOpen, onClose, onRefresh, maintenance = null }) =>
                             >
                                 <option value="">Select a vehicle</option>
                                 {vehicles.map(v => (
-                                    <option key={v._id} value={v._id}>{v.name} ({v.licensePlate})</option>
+                                    <option key={v._id} value={v._id}>
+                                        {v.uid || v._id.slice(-6)} - {v.name} ({v.licensePlate})
+                                    </option>
                                 ))}
                             </select>
                         </div>

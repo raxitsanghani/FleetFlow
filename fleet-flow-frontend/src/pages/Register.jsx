@@ -41,7 +41,7 @@ const Register = () => {
         <div className="min-h-screen flex items-center justify-center bg-slate-900 p-4">
             <div className="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden">
                 <div className="p-8 bg-primary-600 text-white flex flex-col items-center">
-                    <img src={logo} alt="FleetFlow Logo" className="w-20 h-20 object-contain mb-4 filter brightness-0 invert" />
+                    <img src={logo} alt="FleetFlow Logo" className="w-20 h-20 object-cover mb-4 " />
                     <h2 className="text-2xl font-bold">FleetFlow</h2>
                     <p className="text-primary-100 italic">Join our enterprise fleet network</p>
                 </div>

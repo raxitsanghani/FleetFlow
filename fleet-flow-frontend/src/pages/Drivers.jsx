@@ -164,6 +164,8 @@ const Drivers = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingDriver, setEditingDriver] = useState(null);
     const [deletingDriver, setDeletingDriver] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filterStatus, setFilterStatus] = useState('ALL');
 
     useEffect(() => { fetchDrivers(); }, []);
 
@@ -212,6 +214,15 @@ const Drivers = () => {
         }
     };
 
+    const filteredDrivers = drivers.filter(d => {
+        const matchesSearch =
+            d.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            d.licenseNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (d.uid && d.uid.toLowerCase().includes(searchTerm.toLowerCase()));
+        const matchesStatus = filterStatus === 'ALL' || d.status === filterStatus;
+        return matchesSearch && matchesStatus;
+    });
+
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
@@ -242,24 +253,40 @@ const Drivers = () => {
             />
 
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-                    <div className="relative">
+                <div className="p-4 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="relative flex-1 max-w-md">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                         <input
                             type="text"
-                            placeholder="Search by name or license..."
-                            className="pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500"
+                            placeholder="Search by name, license, or ID..."
+                            className="w-full pl-10 text-gray-700 pr-4 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
-                    <button className="flex items-center space-x-2 text-slate-500 text-sm hover:text-slate-900 transition-colors">
-                        <Filter size={18} />
-                        <span>Filters</span>
-                    </button>
+                    <div className="flex items-center space-x-3">
+                        <div className="flex items-center space-x-2 text-slate-500 text-sm">
+                            <Filter size={18} />
+                            <span>Status:</span>
+                        </div>
+                        <select
+                            className="text-sm border border-slate-200 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-primary-500 bg-white font-medium text-slate-700"
+                            value={filterStatus}
+                            onChange={(e) => setFilterStatus(e.target.value)}
+                        >
+                            <option value="ALL">All Drivers</option>
+                            <option value="ON_DUTY">On Duty</option>
+                            <option value="OFF_DUTY">Off Duty</option>
+                            <option value="SUSPENDED">Suspended</option>
+                            <option value="ON_TRIP">On Trip</option>
+                        </select>
+                    </div>
                 </div>
 
                 <table className="w-full text-left">
                     <thead className="bg-slate-50 border-b border-slate-100">
                         <tr>
+                            <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">ID</th>
                             <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Driver Info</th>
                             <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">License</th>
                             <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Category</th>
@@ -270,11 +297,16 @@ const Drivers = () => {
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                         {loading ? (
-                            <tr><td colSpan="6" className="px-6 py-10 text-center text-slate-500 italic">Fetching workforce data...</td></tr>
-                        ) : drivers.length === 0 ? (
-                            <tr><td colSpan="6" className="px-6 py-10 text-center text-slate-500 italic">No operators registered in your system</td></tr>
-                        ) : drivers.map((d) => (
+                            <tr><td colSpan="7" className="px-6 py-10 text-center text-slate-500 italic">Fetching workforce data...</td></tr>
+                        ) : filteredDrivers.length === 0 ? (
+                            <tr><td colSpan="7" className="px-6 py-10 text-center text-slate-500 italic">No operators match your search/filters</td></tr>
+                        ) : filteredDrivers.map((d) => (
                             <tr key={d._id} className="hover:bg-slate-50 transition-colors">
+                                <td className="px-6 py-4">
+                                    <span className="text-[10px] font-mono text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded leading-none uppercase">
+                                        {d.uid || d._id.slice(-6)}
+                                    </span>
+                                </td>
                                 <td className="px-6 py-4">
                                     <div className="flex items-center space-x-3">
                                         <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-bold border border-primary-200 uppercase text-sm">
@@ -297,7 +329,7 @@ const Drivers = () => {
                                 </td>
                                 <td className="px-6 py-4">
                                     <div className="flex items-center space-x-2">
-                                        <Star size={14} className="text-yellow-500" fill="currentColor" />
+                                        < Star size={14} className="text-yellow-500" fill="currentColor" />
                                         <span className="text-sm font-bold text-slate-900">{d.safetyScore ?? 100}</span>
                                     </div>
                                 </td>

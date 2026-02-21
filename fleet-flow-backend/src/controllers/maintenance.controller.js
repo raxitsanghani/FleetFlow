@@ -1,6 +1,7 @@
 const Maintenance = require('../models/Maintenance');
 const Vehicle = require('../models/Vehicle');
 const mongoose = require('mongoose');
+const { generateUID } = require('../utils/idGenerator');
 
 const logMaintenance = async (req, res) => {
     const session = await mongoose.startSession();
@@ -25,6 +26,7 @@ const logMaintenance = async (req, res) => {
         }
 
         const maintenance = await Maintenance.create([{
+            uid: generateUID('MNT'),
             vehicleId,
             description,
             cost,

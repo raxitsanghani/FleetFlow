@@ -1,10 +1,12 @@
 const FuelLog = require('../models/FuelLog');
 const Trip = require('../models/Trip');
+const { generateUID } = require('../utils/idGenerator');
 
 const logFuel = async (req, res) => {
     try {
         const { vehicleId, tripId, liters, cost, date } = req.body;
         const log = await FuelLog.create({
+            uid: generateUID('FUE'),
             vehicleId,
             tripId: tripId || null,
             liters,

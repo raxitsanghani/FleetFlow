@@ -141,6 +141,8 @@ const Trips = () => {
     const [editingTrip, setEditingTrip] = useState(null);
     const [completingTrip, setCompletingTrip] = useState(null);
     const [deletingTrip, setDeletingTrip] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filterStatus, setFilterStatus] = useState('ALL');
 
     useEffect(() => {
         fetchTrips();
@@ -186,6 +188,16 @@ const Trips = () => {
         }
     };
 
+    const filteredTrips = trips.filter(t => {
+        const matchesSearch =
+            (t.vehicle?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (t.vehicle?.licensePlate || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (t.driver?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (t.uid && t.uid.toLowerCase().includes(searchTerm.toLowerCase()));
+        const matchesStatus = filterStatus === 'ALL' || t.status === filterStatus;
+        return matchesSearch && matchesStatus;
+    });
+
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
@@ -223,25 +235,41 @@ const Trips = () => {
             />
 
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-                    <div className="relative">
+                <div className="p-4 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="relative flex-1 max-w-md">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                         <input
                             type="text"
-                            placeholder="Search trips..."
-                            className="pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500"
+                            placeholder="Search by vehicle, operator, or ID..."
+                            className="w-full pl-10 pr-4 py-2 text-gray-700 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
-                    <button className="flex items-center space-x-2 text-slate-500 text-sm hover:text-slate-900 transition-colors">
-                        <Filter size={18} />
-                        <span>Filters</span>
-                    </button>
+                    <div className="flex items-center space-x-3">
+                        <div className="flex items-center space-x-2 text-slate-500 text-sm">
+                            <Filter size={18} />
+                            <span>Status:</span>
+                        </div>
+                        <select
+                            className="text-sm border border-slate-200 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-primary-500 bg-white font-medium text-slate-700"
+                            value={filterStatus}
+                            onChange={(e) => setFilterStatus(e.target.value)}
+                        >
+                            <option value="ALL">All Assignments</option>
+                            <option value="DRAFT">Draft</option>
+                            <option value="DISPATCHED">Dispatched</option>
+                            <option value="COMPLETED">Completed</option>
+                            <option value="CANCELLED">Cancelled</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
                         <thead className="bg-slate-50 border-b border-slate-100">
                             <tr>
+                                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">ID</th>
                                 <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Assignment</th>
                                 <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Operator</th>
                                 <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase text-center">Weight</th>
@@ -252,13 +280,18 @@ const Trips = () => {
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                             {loading ? (
-                                <tr><td colSpan="6" className="px-6 py-10 text-center text-slate-500 italic">Synchronizing dispatch data...</td></tr>
-                            ) : trips.length === 0 ? (
-                                <tr><td colSpan="6" className="px-6 py-10 text-center text-slate-500 italic">No scheduled trips found</td></tr>
-                            ) : trips.map((t) => {
+                                <tr><td colSpan="7" className="px-6 py-10 text-center text-slate-500 italic">Synchronizing dispatch data...</td></tr>
+                            ) : filteredTrips.length === 0 ? (
+                                <tr><td colSpan="7" className="px-6 py-10 text-center text-slate-500 italic">No scheduled trips match your search/filters</td></tr>
+                            ) : filteredTrips.map((t) => {
                                 const Style = statusStyles[t.status];
                                 return (
                                     <tr key={t._id} className="hover:bg-slate-50 transition-colors">
+                                        <td className="px-6 py-4">
+                                            <span className="text-[10px] font-mono text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded leading-none uppercase">
+                                                {t.uid || t._id.slice(-6)}
+                                            </span>
+                                        </td>
                                         <td className="px-6 py-4">
                                             <div>
                                                 <p className="font-semibold text-slate-900">{t.vehicle?.name || 'Unknown'}</p>

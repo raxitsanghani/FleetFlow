@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Truck, User, Weight, Gauge } from 'lucide-react';
+import { X, Truck, User, Weight, Gauge, MapPin, Navigation } from 'lucide-react';
 import { motion } from 'framer-motion';
 import api from '../api/api';
 import { toast } from 'react-toastify';
@@ -8,7 +8,9 @@ const emptyForm = {
     vehicleId: '',
     driverId: '',
     cargoWeight: '',
-    startOdometer: ''
+    startOdometer: '',
+    origin: '',
+    destination: ''
 };
 
 const TripModal = ({ isOpen, onClose, onRefresh, trip = null }) => {
@@ -26,7 +28,9 @@ const TripModal = ({ isOpen, onClose, onRefresh, trip = null }) => {
                     vehicleId: trip.vehicle?._id || trip.vehicleId?._id || trip.vehicleId || '',
                     driverId: trip.driver?._id || trip.driverId?._id || trip.driverId || '',
                     cargoWeight: trip.cargoWeight || '',
-                    startOdometer: trip.startOdometer || ''
+                    startOdometer: trip.startOdometer || '',
+                    origin: trip.origin || '',
+                    destination: trip.destination || ''
                 });
             } else {
                 setFormData(emptyForm);
@@ -115,7 +119,9 @@ const TripModal = ({ isOpen, onClose, onRefresh, trip = null }) => {
                                 >
                                     <option value="">Choose an available vehicle</option>
                                     {vehicles.map(v => (
-                                        <option key={v._id} value={v._id}>{v.name} ({v.licensePlate})</option>
+                                        <option key={v._id} value={v._id}>
+                                            {v.uid || v._id.slice(-6)} - {v.name} ({v.licensePlate})
+                                        </option>
                                     ))}
                                 </select>
                             </div>
@@ -134,9 +140,43 @@ const TripModal = ({ isOpen, onClose, onRefresh, trip = null }) => {
                                 >
                                     <option value="">Choose an on-duty driver</option>
                                     {drivers.map(d => (
-                                        <option key={d._id} value={d._id}>{d.name} ({d.category})</option>
+                                        <option key={d._id} value={d._id}>
+                                            {d.uid || d._id.slice(-6)} - {d.name} ({d.category})
+                                        </option>
                                     ))}
                                 </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                            <label className="text-sm font-semibold text-slate-700">Origin Address</label>
+                            <div className="relative">
+                                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                                <input
+                                    required
+                                    type="text"
+                                    placeholder="e.g. Warehouse A"
+                                    className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary-500 transition-all font-medium text-slate-900"
+                                    value={formData.origin}
+                                    onChange={(e) => setFormData({ ...formData, origin: e.target.value })}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-sm font-semibold text-slate-700">Destination Address</label>
+                            <div className="relative">
+                                <Navigation className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                                <input
+                                    required
+                                    type="text"
+                                    placeholder="e.g. Distribution Center B"
+                                    className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary-500 transition-all font-medium text-slate-900"
+                                    value={formData.destination}
+                                    onChange={(e) => setFormData({ ...formData, destination: e.target.value })}
+                                />
                             </div>
                         </div>
                     </div>

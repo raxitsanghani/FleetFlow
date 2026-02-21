@@ -113,7 +113,9 @@ const FuelModal = ({ isOpen, onClose, onRefresh, fuelEntry = null }) => {
                             >
                                 <option value="">Select a vehicle</option>
                                 {vehicles.map(v => (
-                                    <option key={v._id} value={v._id}>{v.name} ({v.licensePlate})</option>
+                                    <option key={v._id} value={v._id}>
+                                        {v.uid || v._id.slice(-6)} - {v.name} ({v.licensePlate})
+                                    </option>
                                 ))}
                             </select>
                         </div>
@@ -134,7 +136,7 @@ const FuelModal = ({ isOpen, onClose, onRefresh, fuelEntry = null }) => {
                                 <option value="">No trip linked</option>
                                 {filteredTrips.map(t => (
                                     <option key={t._id} value={t._id}>
-                                        {t.vehicle?.name || 'Vehicle'} — {t.status} ({new Date(t.createdAt).toLocaleDateString()})
+                                        {t.uid || t._id?.slice(-6) || 'TRP'} - {t.vehicle?.name || 'Vehicle'} — {t.status} ({new Date(t.createdAt).toLocaleDateString()})
                                     </option>
                                 ))}
                             </select>
