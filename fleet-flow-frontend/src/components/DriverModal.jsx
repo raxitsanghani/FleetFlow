@@ -1,36 +1,57 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, User, CreditCard, Calendar, Award, Shield } from 'lucide-react';
 import { motion } from 'framer-motion';
 import api from '../api/api';
 import { toast } from 'react-toastify';
 
-const DriverModal = ({ isOpen, onClose, onRefresh }) => {
-    const [formData, setFormData] = useState({
-        name: '',
-        licenseNumber: '',
-        licenseExpiry: '',
-        category: 'Heavy Truck',
-        status: 'OFF_DUTY'
-    });
+const emptyForm = {
+    name: '',
+    licenseNumber: '',
+    licenseExpiry: '',
+    category: 'Heavy Truck',
+    status: 'OFF_DUTY',
+    safetyScore: 100
+};
+
+// Accepts optional `driver` prop — if provided, modal is in Edit mode
+const DriverModal = ({ isOpen, onClose, onRefresh, driver = null }) => {
+    const [formData, setFormData] = useState(emptyForm);
     const [loading, setLoading] = useState(false);
+    const isEdit = !!driver;
+
+    useEffect(() => {
+        if (driver) {
+            setFormData({
+                name: driver.name || '',
+                licenseNumber: driver.licenseNumber || '',
+                licenseExpiry: driver.licenseExpiry
+                    ? new Date(driver.licenseExpiry).toISOString().split('T')[0]
+                    : '',
+                category: driver.category || 'Heavy Truck',
+                status: driver.status || 'OFF_DUTY',
+                safetyScore: driver.safetyScore !== undefined ? driver.safetyScore : 100
+            });
+        } else {
+            setFormData(emptyForm);
+        }
+    }, [driver, isOpen]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         try {
-            await api.post('/drivers', formData);
-            toast.success('Driver registered successfully!');
+            if (isEdit) {
+                await api.put(`/drivers/${driver._id}`, formData);
+                toast.success('Driver updated successfully!');
+            } else {
+                await api.post('/drivers', formData);
+                toast.success('Driver registered successfully!');
+            }
             onRefresh();
             onClose();
-            setFormData({
-                name: '',
-                licenseNumber: '',
-                licenseExpiry: '',
-                category: 'Heavy Truck',
-                status: 'OFF_DUTY'
-            });
+            setFormData(emptyForm);
         } catch (err) {
-            toast.error(err.response?.data?.error || 'Failed to register driver');
+            toast.error(err.response?.data?.error || `Failed to ${isEdit ? 'update' : 'register'} driver`);
         } finally {
             setLoading(false);
         }
@@ -48,8 +69,12 @@ const DriverModal = ({ isOpen, onClose, onRefresh }) => {
             >
                 <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                     <div>
-                        <h2 className="text-xl font-bold text-slate-900">Register New Driver</h2>
-                        <p className="text-sm text-slate-500">Add a qualified driver to your workforce</p>
+                        <h2 className="text-xl font-bold text-slate-900">
+                            {isEdit ? 'Edit Driver' : 'Register New Driver'}
+                        </h2>
+                        <p className="text-sm text-slate-500">
+                            {isEdit ? `Editing: ${driver.name}` : 'Add a qualified driver to your workforce'}
+                        </p>
                     </div>
                     <button
                         onClick={onClose}
@@ -98,6 +123,7 @@ const DriverModal = ({ isOpen, onClose, onRefresh }) => {
                                 <input
                                     required
                                     type="date"
+                                    min={new Date().toISOString().split('T')[0]}
                                     className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary-500 transition-all font-medium text-slate-900"
                                     value={formData.licenseExpiry}
                                     onChange={(e) => setFormData({ ...formData, licenseExpiry: e.target.value })}
@@ -123,7 +149,7 @@ const DriverModal = ({ isOpen, onClose, onRefresh }) => {
                         </div>
 
                         <div className="space-y-1">
-                            <label className="text-sm font-semibold text-slate-700">Initial Status</label>
+                            <label className="text-sm font-semibold text-slate-700">Status</label>
                             <div className="relative">
                                 <Shield className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                                 <select
@@ -137,6 +163,25 @@ const DriverModal = ({ isOpen, onClose, onRefresh }) => {
                                 </select>
                             </div>
                         </div>
+
+                        {isEdit && (
+                            <div className="space-y-1">
+                                <label className="text-sm font-semibold text-slate-700">Safety Score (%)</label>
+                                <div className="relative">
+                                    <Shield className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        max="100"
+                                        step="0.1"
+                                        placeholder="100"
+                                        className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary-500 transition-all font-medium text-slate-900"
+                                        value={formData.safetyScore}
+                                        onChange={(e) => setFormData({ ...formData, safetyScore: e.target.value })}
+                                    />
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     <div className="pt-4 flex space-x-3">
@@ -152,7 +197,7 @@ const DriverModal = ({ isOpen, onClose, onRefresh }) => {
                             disabled={loading}
                             className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold disabled:opacity-50"
                         >
-                            {loading ? 'Registering...' : 'Add Driver'}
+                            {loading ? 'Saving...' : isEdit ? 'Save Changes' : 'Add Driver'}
                         </button>
                     </div>
                 </form>

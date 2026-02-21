@@ -56,9 +56,25 @@ const updateDriver = async (req, res) => {
     }
 };
 
+const deleteDriver = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const driver = await Driver.findById(id);
+        if (!driver) return res.status(404).json({ error: 'Driver not found' });
+        if (driver.status === 'ON_TRIP') {
+            return res.status(400).json({ error: 'Cannot remove a driver who is currently on a trip' });
+        }
+        await Driver.findByIdAndDelete(id);
+        res.json({ message: 'Driver removed successfully' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 module.exports = {
     getAllDrivers,
     getDriverById,
     createDriver,
-    updateDriver
+    updateDriver,
+    deleteDriver
 };

@@ -5,15 +5,18 @@ import Dashboard from './pages/Dashboard';
 import Vehicles from './pages/Vehicles';
 import Drivers from './pages/Drivers';
 import Trips from './pages/Trips';
+import Maintenance from './pages/Maintenance';
+import FuelLogs from './pages/FuelLogs';
+import Analytics from './pages/Analytics';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 // Placeholder pages for quick completion
-const Maintenance = () => <div className="p-8"><h1>Service Logs</h1><p className="text-slate-500 mt-2 italic">Service record modules loading...</p></div>;
-const Fuel = () => <div className="p-8"><h1>Fuel & Expense</h1><p className="text-slate-500 mt-2 italic">Calculations and ROI tools module...</p></div>;
-const Analytics = () => <div className="p-8"><h1>Advanced Analytics</h1><p className="text-slate-500 mt-2 italic">Generating fleet reports and ROI charts...</p></div>;
+
+
+
 
 function App() {
   return (
@@ -30,7 +33,7 @@ function App() {
             <Route path="/drivers" element={<Drivers />} />
             <Route path="/trips" element={<Trips />} />
             <Route path="/maintenance" element={<Maintenance />} />
-            <Route path="/fuel" element={<Fuel />} />
+            <Route path="/fuel" element={<FuelLogs />} />
             <Route path="/analytics" element={<Analytics />} />
           </Route>
 

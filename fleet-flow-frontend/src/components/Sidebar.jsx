@@ -10,6 +10,7 @@ import {
     LogOut
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import logo from '../logo.png';
 
 const Sidebar = () => {
     const { user, logout } = useAuth();
@@ -29,7 +30,8 @@ const Sidebar = () => {
 
     return (
         <div className="w-64 h-screen bg-slate-900 text-white flex flex-col fixed left-0 top-0">
-            <div className="p-6">
+            <div className="p-6 flex items-center space-x-3">
+                <img src={logo} alt="FleetFlow Logo" className="w-10 h-10 object-contain" />
                 <h1 className="text-2xl font-bold text-primary-400">FleetFlow</h1>
             </div>
 
@@ -39,8 +41,8 @@ const Sidebar = () => {
                         key={item.name}
                         to={item.path}
                         className={`flex items-center space-x-3 p-3 rounded-lg transition-colors ${location.pathname === item.path
-                                ? 'bg-primary-600 text-white'
-                                : 'hover:bg-slate-800 text-slate-400 hover:text-white'
+                            ? 'bg-primary-600 text-white'
+                            : 'hover:bg-slate-800 text-slate-400 hover:text-white'
                             }`}
                     >
                         <item.icon size={20} />

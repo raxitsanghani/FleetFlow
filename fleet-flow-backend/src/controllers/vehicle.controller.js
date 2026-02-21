@@ -1,7 +1,28 @@
 const Vehicle = require('../models/Vehicle');
+const Maintenance = require('../models/Maintenance');
 
 const getAllVehicles = async (req, res) => {
     try {
+        // Auto-lock vehicles that have maintenance scheduled for today
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+        const tomorrowStart = new Date(todayStart);
+        tomorrowStart.setDate(tomorrowStart.getDate() + 1);
+
+        // Find all maintenance records dated today
+        const todayMaintenances = await Maintenance.find({
+            date: { $gte: todayStart, $lt: tomorrowStart }
+        });
+
+        // Flip those vehicles to IN_SHOP if they're still AVAILABLE
+        if (todayMaintenances.length > 0) {
+            const vehicleIds = todayMaintenances.map(m => m.vehicleId);
+            await Vehicle.updateMany(
+                { _id: { $in: vehicleIds }, status: 'AVAILABLE' },
+                { status: 'IN_SHOP' }
+            );
+        }
+
         const vehicles = await Vehicle.find({ deletedAt: null });
         res.json(vehicles);
     } catch (error) {

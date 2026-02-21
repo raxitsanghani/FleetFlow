@@ -1,43 +1,63 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Truck, Hash, Gauge, DollarSign, Weight } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import api from '../api/api';
 import { toast } from 'react-toastify';
 
-const VehicleModal = ({ isOpen, onClose, onRefresh }) => {
-    const [formData, setFormData] = useState({
-        name: '',
-        licensePlate: '',
-        type: 'TRUCK',
-        maxCapacity: '',
-        odometer: '',
-        acquisitionCost: ''
-    });
+const emptyForm = {
+    name: '',
+    licensePlate: '',
+    type: 'TRUCK',
+    maxCapacity: '',
+    odometer: '',
+    acquisitionCost: ''
+};
+
+// Accepts optional `vehicle` prop — if provided, modal is in Edit mode
+const VehicleModal = ({ isOpen, onClose, onRefresh, vehicle = null }) => {
+    const [formData, setFormData] = useState(emptyForm);
     const [loading, setLoading] = useState(false);
+    const isEdit = !!vehicle;
+
+    useEffect(() => {
+        if (vehicle) {
+            setFormData({
+                name: vehicle.name || '',
+                licensePlate: vehicle.licensePlate || '',
+                type: vehicle.type || 'TRUCK',
+                maxCapacity: vehicle.maxCapacity || '',
+                odometer: vehicle.odometer || '',
+                acquisitionCost: vehicle.acquisitionCost || ''
+            });
+        } else {
+            setFormData(emptyForm);
+        }
+    }, [vehicle, isOpen]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         try {
-            await api.post('/vehicles', {
+            const payload = {
                 ...formData,
                 maxCapacity: parseFloat(formData.maxCapacity),
                 odometer: parseFloat(formData.odometer),
                 acquisitionCost: parseFloat(formData.acquisitionCost)
-            });
-            toast.success('Vehicle added successfully!');
+            };
+
+            if (isEdit) {
+                await api.put(`/vehicles/${vehicle._id}`, payload);
+                toast.success('Vehicle updated successfully!');
+            } else {
+                await api.post('/vehicles', payload);
+                toast.success('Vehicle added successfully!');
+            }
+
             onRefresh();
             onClose();
-            setFormData({
-                name: '',
-                licensePlate: '',
-                type: 'TRUCK',
-                maxCapacity: '',
-                odometer: '',
-                acquisitionCost: ''
-            });
+            setFormData(emptyForm);
         } catch (err) {
-            toast.error(err.response?.data?.error || 'Failed to add vehicle');
+            toast.error(err.response?.data?.error || `Failed to ${isEdit ? 'update' : 'add'} vehicle`);
         } finally {
             setLoading(false);
         }
@@ -55,8 +75,12 @@ const VehicleModal = ({ isOpen, onClose, onRefresh }) => {
             >
                 <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                     <div>
-                        <h2 className="text-xl font-bold text-slate-900">Add New Vehicle</h2>
-                        <p className="text-sm text-slate-500">Register a new asset to the fleet</p>
+                        <h2 className="text-xl font-bold text-slate-900">
+                            {isEdit ? 'Edit Vehicle' : 'Add New Vehicle'}
+                        </h2>
+                        <p className="text-sm text-slate-500">
+                            {isEdit ? `Editing: ${vehicle.name}` : 'Register a new asset to the fleet'}
+                        </p>
                     </div>
                     <button
                         onClick={onClose}
@@ -91,7 +115,7 @@ const VehicleModal = ({ isOpen, onClose, onRefresh }) => {
                                     required
                                     type="text"
                                     placeholder="e.g. ABC-1234"
-                                    className="w-full pl-10 pr-4 py-2 text-gray-900 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary-500 transition-all caps"
+                                    className="w-full pl-10 pr-4 py-2 text-gray-900 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary-500 transition-all"
                                     value={formData.licensePlate}
                                     onChange={(e) => setFormData({ ...formData, licensePlate: e.target.value.toUpperCase() })}
                                 />
@@ -170,7 +194,7 @@ const VehicleModal = ({ isOpen, onClose, onRefresh }) => {
                             disabled={loading}
                             className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold disabled:opacity-50"
                         >
-                            {loading ? 'Adding...' : 'Confirm Asset'}
+                            {loading ? 'Saving...' : isEdit ? 'Save Changes' : 'Confirm Asset'}
                         </button>
                     </div>
                 </form>

@@ -3,7 +3,8 @@ const {
     getAllDrivers,
     getDriverById,
     createDriver,
-    updateDriver
+    updateDriver,
+    deleteDriver
 } = require('../controllers/driver.controller');
 const { authenticate, authorize } = require('../middleware/auth.middleware');
 
@@ -15,5 +16,6 @@ router.get('/', getAllDrivers);
 router.get('/:id', getDriverById);
 router.post('/', authorize('FLEET_MANAGER', 'SAFETY_OFFICER'), createDriver);
 router.put('/:id', authorize('FLEET_MANAGER', 'SAFETY_OFFICER'), updateDriver);
+router.delete('/:id', authorize('FLEET_MANAGER'), deleteDriver);
 
 module.exports = router;
