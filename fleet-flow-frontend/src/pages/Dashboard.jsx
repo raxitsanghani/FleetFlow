@@ -24,13 +24,15 @@ const Dashboard = () => {
     if (loading) return <div>Loading dashboard...</div>;
 
     return (
-        <div className="space-y-8">
-            <div>
-                <h1 className="text-2xl font-bold text-slate-900">Command Center</h1>
-                <p className="text-slate-500">Real-time fleet performance overview</p>
+        <div className="space-y-6 lg:space-y-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h1 className="text-2xl font-bold text-slate-900">Command Center</h1>
+                    <p className="text-slate-500 text-sm sm:text-base">Real-time fleet performance overview</p>
+                </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                 <KPICard
                     title="Active Fleet"
                     value={stats?.activeFleet || 0}
@@ -61,10 +63,10 @@ const Dashboard = () => {
                 />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
                 <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                     <h3 className="text-lg font-bold mb-6">Fleet Utilization Trend</h3>
-                    <div className="h-64 flex items-center justify-center text-slate-400 bg-slate-50 rounded-xl italic">
+                    <div className="h-64 flex items-center justify-center text-slate-400 bg-slate-50 rounded-xl italic text-sm">
                         Chart integration placeholder
                     </div>
                 </div>

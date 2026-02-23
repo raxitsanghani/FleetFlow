@@ -60,12 +60,12 @@ const DriverModal = ({ isOpen, onClose, onRefresh, driver = null }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
             <motion.div
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden"
+                className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden my-auto"
             >
                 <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                     <div>
@@ -78,7 +78,7 @@ const DriverModal = ({ isOpen, onClose, onRefresh, driver = null }) => {
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-2 hover:bg-slate-200 rounded-full transition-colors text-slate-400 hover:text-slate-600"
+                        className="p-2 hover:bg-slate-200 rounded-full transition-colors text-slate-400 hover:text-slate-600 outline-none"
                     >
                         <X size={20} />
                     </button>
@@ -93,14 +93,14 @@ const DriverModal = ({ isOpen, onClose, onRefresh, driver = null }) => {
                                 required
                                 type="text"
                                 placeholder="e.g. Michael Scofield"
-                                className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary-500 transition-all font-medium text-slate-900"
+                                className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary-500 transition-all font-medium text-slate-900 sm:text-sm"
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                             />
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-1">
                             <label className="text-sm font-semibold text-slate-700">License Number</label>
                             <div className="relative">
@@ -109,7 +109,7 @@ const DriverModal = ({ isOpen, onClose, onRefresh, driver = null }) => {
                                     required
                                     type="text"
                                     placeholder="DL-12345678"
-                                    className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary-500 transition-all font-medium text-slate-900"
+                                    className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary-500 transition-all font-medium text-slate-900 sm:text-sm"
                                     value={formData.licenseNumber}
                                     onChange={(e) => setFormData({ ...formData, licenseNumber: e.target.value })}
                                 />
@@ -124,7 +124,7 @@ const DriverModal = ({ isOpen, onClose, onRefresh, driver = null }) => {
                                     required
                                     type="date"
                                     min={new Date().toISOString().split('T')[0]}
-                                    className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary-500 transition-all font-medium text-slate-900"
+                                    className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary-500 transition-all font-medium text-slate-900 sm:text-sm"
                                     value={formData.licenseExpiry}
                                     onChange={(e) => setFormData({ ...formData, licenseExpiry: e.target.value })}
                                 />
@@ -136,7 +136,7 @@ const DriverModal = ({ isOpen, onClose, onRefresh, driver = null }) => {
                             <div className="relative">
                                 <Award className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                                 <select
-                                    className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary-500 transition-all bg-white font-medium text-slate-900"
+                                    className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary-500 transition-all bg-white font-medium text-slate-900 sm:text-sm"
                                     value={formData.category}
                                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                                 >
@@ -153,7 +153,7 @@ const DriverModal = ({ isOpen, onClose, onRefresh, driver = null }) => {
                             <div className="relative">
                                 <Shield className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                                 <select
-                                    className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary-500 transition-all bg-white font-medium text-slate-900"
+                                    className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary-500 transition-all bg-white font-medium text-slate-900 sm:text-sm"
                                     value={formData.status}
                                     onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                                 >
@@ -165,7 +165,7 @@ const DriverModal = ({ isOpen, onClose, onRefresh, driver = null }) => {
                         </div>
 
                         {isEdit && (
-                            <div className="space-y-1">
+                            <div className="sm:col-span-2 space-y-1">
                                 <label className="text-sm font-semibold text-slate-700">Safety Score (%)</label>
                                 <div className="relative">
                                     <Shield className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
@@ -175,7 +175,7 @@ const DriverModal = ({ isOpen, onClose, onRefresh, driver = null }) => {
                                         max="100"
                                         step="0.1"
                                         placeholder="100"
-                                        className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary-500 transition-all font-medium text-slate-900"
+                                        className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary-500 transition-all font-medium text-slate-900 sm:text-sm"
                                         value={formData.safetyScore}
                                         onChange={(e) => setFormData({ ...formData, safetyScore: e.target.value })}
                                     />
@@ -184,18 +184,18 @@ const DriverModal = ({ isOpen, onClose, onRefresh, driver = null }) => {
                         )}
                     </div>
 
-                    <div className="pt-4 flex space-x-3">
+                    <div className="pt-4 flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 px-4 py-2 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-50 transition-colors font-semibold"
+                            className="w-full sm:flex-1 px-4 py-2 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-50 transition-colors font-semibold outline-none sm:text-sm"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={loading}
-                            className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold disabled:opacity-50"
+                            className="w-full sm:flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold disabled:opacity-50 outline-none sm:text-sm"
                         >
                             {loading ? 'Saving...' : isEdit ? 'Save Changes' : 'Add Driver'}
                         </button>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Gauge, DollarSign, Fuel, Droplets, CheckCircle2 } from 'lucide-react';
+import { X, Gauge, IndianRupee, Fuel, Droplets, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import api from '../api/api';
 import { toast } from 'react-toastify';
@@ -107,9 +107,9 @@ const CompleteTripModal = ({ trip, isOpen, onClose, onRefresh }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <label className="text-sm font-semibold text-slate-700">Trip Revenue ($)</label>
+                            <label className="text-sm font-semibold text-slate-700">Trip Revenue (₹)</label>
                             <div className="relative">
-                                <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                                <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                                 <input
                                     required
                                     type="number"
@@ -157,9 +157,9 @@ const CompleteTripModal = ({ trip, isOpen, onClose, onRefresh }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <label className="text-sm font-semibold text-slate-700">Fuel Cost ($)</label>
+                            <label className="text-sm font-semibold text-slate-700">Fuel Cost (₹)</label>
                             <div className="relative">
-                                <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                                <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                                 <input
                                     type="number"
                                     step="0.01"
@@ -176,7 +176,7 @@ const CompleteTripModal = ({ trip, isOpen, onClose, onRefresh }) => {
                     {pricePerLiter && (
                         <div className="bg-orange-50 rounded-xl px-4 py-3 flex justify-between items-center text-sm">
                             <span className="text-orange-700 font-medium">Price per Liter</span>
-                            <span className="font-bold text-orange-900">${pricePerLiter} / L</span>
+                            <span className="font-bold text-orange-900">₹{pricePerLiter} / L</span>
                         </div>
                     )}
 

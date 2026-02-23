@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Truck, Fuel, DollarSign, Calendar, MapPin } from 'lucide-react';
+import { X, Truck, Fuel, IndianRupee, Calendar, MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
 import api from '../api/api';
 import { toast } from 'react-toastify';
@@ -155,9 +155,9 @@ const FuelModal = ({ isOpen, onClose, onRefresh, fuelEntry = null }) => {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <label className="text-sm font-semibold text-slate-700">Cost ($)</label>
+                            <label className="text-sm font-semibold text-slate-700">Cost (₹)</label>
                             <div className="relative">
-                                <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                                <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                                 <input
                                     required type="number" step="0.01" placeholder="e.g. 85"
                                     className="w-full pl-9 pr-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary-500 font-medium text-slate-900"
@@ -184,7 +184,7 @@ const FuelModal = ({ isOpen, onClose, onRefresh, fuelEntry = null }) => {
                         <div className="bg-slate-50 rounded-xl p-3 text-sm text-slate-600 flex justify-between">
                             <span>Price per liter</span>
                             <span className="font-bold text-slate-900">
-                                ${(Number(formData.cost) / Number(formData.liters)).toFixed(2)}/L
+                                ₹{(Number(formData.cost) / Number(formData.liters)).toFixed(2)}/L
                             </span>
                         </div>
                     )}

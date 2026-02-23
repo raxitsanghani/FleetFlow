@@ -188,14 +188,14 @@ const Trips = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900">Trip Dispatch Center</h1>
-                    <p className="text-slate-500">Coordinate and track active vehicle assignments</p>
+                    <p className="text-slate-500 text-sm sm:text-base">Coordinate and track active vehicle assignments</p>
                 </div>
                 <button
                     onClick={() => { setEditingTrip(null); setIsModalOpen(true); }}
-                    className="bg-primary-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-primary-700 transition-colors"
+                    className="w-full sm:w-auto bg-primary-600 text-white px-4 py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-primary-700 transition-colors"
                 >
                     <Plus size={20} />
                     <span>New Assignment</span>
@@ -223,23 +223,23 @@ const Trips = () => {
             />
 
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-                    <div className="relative">
+                <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="relative w-full sm:w-auto">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                         <input
                             type="text"
                             placeholder="Search trips..."
-                            className="pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500"
+                            className="pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500 w-full"
                         />
                     </div>
-                    <button className="flex items-center space-x-2 text-slate-500 text-sm hover:text-slate-900 transition-colors">
+                    <button className="flex items-center justify-center space-x-2 text-slate-500 text-sm hover:text-slate-900 transition-colors border border-slate-200 sm:border-0 p-2 sm:p-0 rounded-lg">
                         <Filter size={18} />
                         <span>Filters</span>
                     </button>
                 </div>
 
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left">
+                    <table className="w-full text-left min-w-[900px]">
                         <thead className="bg-slate-50 border-b border-slate-100">
                             <tr>
                                 <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Assignment</th>

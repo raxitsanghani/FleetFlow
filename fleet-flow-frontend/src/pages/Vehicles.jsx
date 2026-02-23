@@ -222,14 +222,14 @@ const Vehicles = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900">Vehicle Registry</h1>
-                    <p className="text-slate-500">Manage your fleet assets and status</p>
+                    <p className="text-slate-500 text-sm sm:text-base">Manage your fleet assets and status</p>
                 </div>
                 <button
                     onClick={() => { setEditingVehicle(null); setIsModalOpen(true); }}
-                    className="bg-primary-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-primary-700 transition-colors"
+                    className="w-full sm:w-auto bg-primary-600 text-white px-4 py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-primary-700 transition-colors"
                 >
                     <Plus size={20} />
                     <span>Add Vehicle</span>
@@ -250,64 +250,66 @@ const Vehicles = () => {
             />
 
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-                    <div className="relative">
+                <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="relative w-full sm:w-auto">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                         <input
                             type="text"
                             placeholder="Search by license plate..."
-                            className="pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500"
+                            className="pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500 w-full"
                         />
                     </div>
-                    <button className="flex items-center space-x-2 text-slate-500 text-sm hover:text-slate-900 transition-colors">
+                    <button className="flex items-center justify-center space-x-2 text-slate-500 text-sm hover:text-slate-900 transition-colors border border-slate-200 sm:border-0 p-2 sm:p-0 rounded-lg">
                         <Filter size={18} />
                         <span>Filters</span>
                     </button>
                 </div>
 
-                <table className="w-full text-left">
-                    <thead className="bg-slate-50 border-b border-slate-100">
-                        <tr>
-                            <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Vehicle Name</th>
-                            <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">License Plate</th>
-                            <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Type</th>
-                            <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Odometer</th>
-                            <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Status</th>
-                            <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                        {loading ? (
-                            <tr><td colSpan="6" className="px-6 py-10 text-center text-slate-500 italic">Fetching vehicles...</td></tr>
-                        ) : vehicles.length === 0 ? (
-                            <tr><td colSpan="6" className="px-6 py-10 text-center text-slate-500 italic">No assets found in registry</td></tr>
-                        ) : vehicles.map((v) => (
-                            <tr key={v._id} className="hover:bg-slate-50 transition-colors">
-                                <td className="px-6 py-4">
-                                    <p className="font-semibold text-slate-900">{v.name}</p>
-                                </td>
-                                <td className="px-6 py-4 font-mono text-slate-600 text-sm">{v.licensePlate}</td>
-                                <td className="px-6 py-4">
-                                    <span className="text-xs font-medium text-slate-500">{v.type}</span>
-                                </td>
-                                <td className="px-6 py-4 text-slate-600 font-mono text-sm">{v.odometer?.toLocaleString()} km</td>
-                                <td className="px-6 py-4">
-                                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${statusColors[v.status]}`}>
-                                        {v.status.replace('_', ' ')}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <ActionMenu
-                                        vehicle={v}
-                                        onEdit={handleEdit}
-                                        onDelete={setDeletingVehicle}
-                                        onStatusChange={handleStatusChange}
-                                    />
-                                </td>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left min-w-[800px]">
+                        <thead className="bg-slate-50 border-b border-slate-100">
+                            <tr>
+                                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Vehicle Name</th>
+                                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">License Plate</th>
+                                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Type</th>
+                                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Odometer</th>
+                                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Status</th>
+                                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                            {loading ? (
+                                <tr><td colSpan="6" className="px-6 py-10 text-center text-slate-500 italic">Fetching vehicles...</td></tr>
+                            ) : vehicles.length === 0 ? (
+                                <tr><td colSpan="6" className="px-6 py-10 text-center text-slate-500 italic">No assets found in registry</td></tr>
+                            ) : vehicles.map((v) => (
+                                <tr key={v._id} className="hover:bg-slate-50 transition-colors">
+                                    <td className="px-6 py-4">
+                                        <p className="font-semibold text-slate-900">{v.name}</p>
+                                    </td>
+                                    <td className="px-6 py-4 font-mono text-slate-600 text-sm">{v.licensePlate}</td>
+                                    <td className="px-6 py-4">
+                                        <span className="text-xs font-medium text-slate-500">{v.type}</span>
+                                    </td>
+                                    <td className="px-6 py-4 text-slate-600 font-mono text-sm">{v.odometer?.toLocaleString()} km</td>
+                                    <td className="px-6 py-4">
+                                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${statusColors[v.status]}`}>
+                                            {v.status.replace('_', ' ')}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <ActionMenu
+                                            vehicle={v}
+                                            onEdit={handleEdit}
+                                            onDelete={setDeletingVehicle}
+                                            onStatusChange={handleStatusChange}
+                                        />
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     );

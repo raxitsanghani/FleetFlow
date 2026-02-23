@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { Plus, Search, MoreVertical, Filter, Wrench, Clock, DollarSign, Calendar, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Search, MoreVertical, Filter, Wrench, Clock, IndianRupee, Calendar, Pencil, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../api/api';
 import MaintenanceModal from '../components/MaintenanceModal';
@@ -89,7 +89,7 @@ const DeleteConfirmModal = ({ log, onConfirm, onCancel }) => {
                 <div>
                     <h3 className="text-lg font-bold text-slate-900">Delete Record?</h3>
                     <p className="text-sm text-slate-500 mt-1">
-                        Maintenance entry for <strong>{log.vehicle?.name}</strong> (${log.cost}) will be permanently removed.
+                        Maintenance entry for <strong>{log.vehicle?.name}</strong> (₹{log.cost}) will be permanently removed.
                     </p>
                 </div>
                 <div className="flex space-x-3 pt-2">
@@ -148,14 +148,14 @@ const Maintenance = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900">Service Logs</h1>
-                    <p className="text-slate-500">Track vehicle repairs, maintenance, and operational costs</p>
+                    <p className="text-slate-500 text-sm sm:text-base">Track vehicle repairs, maintenance, and operational costs</p>
                 </div>
                 <button
                     onClick={() => { setEditingLog(null); setIsModalOpen(true); }}
-                    className="bg-primary-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-primary-700 transition-colors"
+                    className="w-full sm:w-auto bg-primary-600 text-white px-4 py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-primary-700 transition-colors"
                 >
                     <Plus size={20} />
                     <span>Log Service</span>
@@ -175,7 +175,7 @@ const Maintenance = () => {
                 onCancel={() => setDeletingLog(null)}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
                     <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600">
                         <Wrench size={24} />
@@ -187,16 +187,14 @@ const Maintenance = () => {
                 </div>
                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
                     <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center text-green-600">
-                        <DollarSign size={24} />
+                        <IndianRupee size={24} />
                     </div>
                     <div>
                         <p className="text-sm font-medium text-slate-500">Combined Cost</p>
-                        <p className="text-2xl font-bold text-slate-900">
-                            ${logs.reduce((sum, log) => sum + log.cost, 0).toLocaleString()}
-                        </p>
+                        ₹{logs.reduce((sum, log) => sum + log.cost, 0).toLocaleString()}
                     </div>
                 </div>
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4 sm:col-span-2 lg:col-span-1">
                     <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
                         <Calendar size={24} />
                     </div>
@@ -210,23 +208,23 @@ const Maintenance = () => {
             </div>
 
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-                    <div className="relative">
+                <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="relative w-full sm:w-auto">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                         <input
                             type="text"
                             placeholder="Search logs..."
-                            className="pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500"
+                            className="pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500 w-full"
                         />
                     </div>
-                    <button className="flex items-center space-x-2 text-slate-500 text-sm hover:text-slate-900 transition-colors">
+                    <button className="flex items-center justify-center space-x-2 text-slate-500 text-sm hover:text-slate-900 transition-colors border border-slate-200 sm:border-0 p-2 sm:p-0 rounded-lg">
                         <Filter size={18} />
                         <span>Filters</span>
                     </button>
                 </div>
 
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left">
+                    <table className="w-full text-left min-w-[800px]">
                         <thead className="bg-slate-50 border-b border-slate-100">
                             <tr>
                                 <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase text-nowrap">Vehicle</th>
@@ -238,12 +236,12 @@ const Maintenance = () => {
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                             {loading ? (
-                                <tr><td colSpan="5" className="px-6 py-10 text-center text-slate-500 italic">Loading service records...</td></tr>
+                                <tr><td colSpan="5" className="px-6 py-10 text-center text-slate-500 italic">Synchronizing dispatch data...</td></tr>
                             ) : logs.length === 0 ? (
-                                <tr><td colSpan="5" className="px-6 py-10 text-center text-slate-500 italic">No maintenance history found</td></tr>
+                                <tr><td colSpan="5" className="px-6 py-10 text-center text-slate-500 italic">No scheduled maintenance found</td></tr>
                             ) : logs.map((log) => (
                                 <tr key={log._id} className="hover:bg-slate-50 transition-colors">
-                                    <td className="px-6 py-4">
+                                    <td className="px-6 py-4 text-nowrap">
                                         <div>
                                             <p className="font-semibold text-slate-900">{log.vehicle?.name || 'Unknown'}</p>
                                             <p className="text-xs font-mono text-slate-500 uppercase">{log.vehicle?.licensePlate || 'N/A'}</p>
@@ -254,10 +252,10 @@ const Maintenance = () => {
                                             {log.description}
                                         </p>
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <p className="text-sm font-bold text-slate-900">${log.cost.toLocaleString()}</p>
+                                    <td className="px-6 py-4 text-nowrap">
+                                        <p className="text-sm font-bold text-slate-900">₹{log.cost.toLocaleString()}</p>
                                     </td>
-                                    <td className="px-6 py-4">
+                                    <td className="px-6 py-4 text-nowrap">
                                         <div className="flex items-center space-x-2 text-slate-500">
                                             <Calendar size={14} />
                                             <span className="text-sm">{new Date(log.date).toLocaleDateString()}</span>

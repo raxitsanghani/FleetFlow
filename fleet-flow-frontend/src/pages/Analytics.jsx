@@ -6,7 +6,7 @@ import {
 } from 'chart.js';
 import { Bar, Doughnut, Line } from 'react-chartjs-2';
 import {
-    Truck, Users, MapPin, Wrench, Fuel, DollarSign,
+    Truck, Users, MapPin, Wrench, Fuel, IndianRupee,
     TrendingUp, Activity, AlertTriangle, CheckCircle2
 } from 'lucide-react';
 import api from '../api/api';
@@ -228,13 +228,15 @@ const Analytics = () => {
 
     return (
         <div className="space-y-6">
-            <div>
-                <h1 className="text-2xl font-bold text-slate-900">Fleet Analytics</h1>
-                <p className="text-slate-500">Comprehensive operational insights across your entire fleet</p>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h1 className="text-2xl font-bold text-slate-900">Fleet Analytics</h1>
+                    <p className="text-slate-500 text-sm sm:text-base">Comprehensive operational insights across your entire fleet</p>
+                </div>
             </div>
 
             {/* KPI Row 1 */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <KPICard icon={Truck} label="Total Vehicles" value={totalVehicles}
                     sub={`${availableVehicles} available · ${onTripVehicles} on trip`}
                     color="bg-blue-50 text-blue-600" />
@@ -250,20 +252,20 @@ const Analytics = () => {
             </div>
 
             {/* KPI Row 2 — Financial */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <KPICard icon={DollarSign} label="Total Revenue" value={`$${totalRevenue.toLocaleString()}`}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <KPICard icon={IndianRupee} label="Total Revenue" value={`₹${totalRevenue.toLocaleString()}`}
                     sub="From completed trips"
                     color="bg-emerald-50 text-emerald-600" />
-                <KPICard icon={Fuel} label="Fuel Spend" value={`$${totalFuelCost.toLocaleString()}`}
+                <KPICard icon={Fuel} label="Fuel Spend" value={`₹${totalFuelCost.toLocaleString()}`}
                     sub={`${totalFuelLiters.toFixed(0)} L consumed`}
                     color="bg-orange-50 text-orange-600" />
-                <KPICard icon={Wrench} label="Maintenance Spend" value={`$${totalMaintenanceCost.toLocaleString()}`}
+                <KPICard icon={Wrench} label="Maintenance Spend" value={`₹${totalMaintenanceCost.toLocaleString()}`}
                     sub={`${maintenances.length} service records`}
                     color="bg-red-50 text-red-600" />
                 <KPICard
                     icon={netProfit >= 0 ? TrendingUp : AlertTriangle}
                     label="Net Profit"
-                    value={`${netProfit >= 0 ? '+' : ''}$${netProfit.toLocaleString()}`}
+                    value={`${netProfit >= 0 ? '+' : ''}₹${netProfit.toLocaleString()}`}
                     sub={`Over ${totalKms.toLocaleString()} km driven`}
                     color={netProfit >= 0 ? "bg-teal-50 text-teal-600" : "bg-red-50 text-red-600"} />
             </div>
@@ -331,42 +333,44 @@ const Analytics = () => {
                     <h3 className="font-semibold text-slate-900">Vehicle Performance Leaderboard</h3>
                     <p className="text-xs text-slate-400 mt-0.5">Ranked by ROI (revenue vs operating cost)</p>
                 </div>
-                <table className="w-full text-left">
-                    <thead className="bg-slate-50">
-                        <tr>
-                            <th className="px-6 py-3 text-xs font-semibold text-slate-500 uppercase">#</th>
-                            <th className="px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Vehicle</th>
-                            <th className="px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Revenue</th>
-                            <th className="px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Operating Cost</th>
-                            <th className="px-6 py-3 text-xs font-semibold text-slate-500 uppercase">ROI</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                        {topVehicles.length === 0 ? (
-                            <tr><td colSpan="5" className="px-6 py-8 text-center text-slate-400 italic">No vehicle performance data yet</td></tr>
-                        ) : topVehicles.map((v, i) => (
-                            <tr key={i} className="hover:bg-slate-50 transition-colors">
-                                <td className="px-6 py-4 text-slate-500 font-medium">#{i + 1}</td>
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center space-x-2">
-                                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold
-                                            ${i === 0 ? 'bg-yellow-400' : i === 1 ? 'bg-slate-400' : i === 2 ? 'bg-orange-400' : 'bg-slate-200 text-slate-600'}`}>
-                                            {i < 3 ? '★' : i + 1}
-                                        </div>
-                                        <span className="font-semibold text-slate-900">{v.name}</span>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4 text-sm font-medium text-slate-700">${v.revenue.toLocaleString()}</td>
-                                <td className="px-6 py-4 text-sm font-medium text-slate-700">${v.cost.toLocaleString()}</td>
-                                <td className="px-6 py-4">
-                                    <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${v.roi >= 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                                        {v.roi >= 0 ? '+' : ''}{v.roi}%
-                                    </span>
-                                </td>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left min-w-[600px]">
+                        <thead className="bg-slate-50">
+                            <tr>
+                                <th className="px-6 py-3 text-xs font-semibold text-slate-500 uppercase">#</th>
+                                <th className="px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Vehicle</th>
+                                <th className="px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Revenue</th>
+                                <th className="px-6 py-3 text-xs font-semibold text-slate-500 uppercase">Operating Cost</th>
+                                <th className="px-6 py-3 text-xs font-semibold text-slate-500 uppercase">ROI</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                            {topVehicles.length === 0 ? (
+                                <tr><td colSpan="5" className="px-6 py-8 text-center text-slate-400 italic">No vehicle performance data yet</td></tr>
+                            ) : topVehicles.map((v, i) => (
+                                <tr key={i} className="hover:bg-slate-50 transition-colors">
+                                    <td className="px-6 py-4 text-slate-500 font-medium">#{i + 1}</td>
+                                    <td className="px-6 py-4 text-nowrap">
+                                        <div className="flex items-center space-x-2">
+                                            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold
+                                                ${i === 0 ? 'bg-yellow-400' : i === 1 ? 'bg-slate-400' : i === 2 ? 'bg-orange-400' : 'bg-slate-200 text-slate-600'}`}>
+                                                {i < 3 ? '★' : i + 1}
+                                            </div>
+                                            <span className="font-semibold text-slate-900">{v.name}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 text-sm font-medium text-slate-700 text-nowrap">₹{v.revenue.toLocaleString()}</td>
+                                    <td className="px-6 py-4 text-sm font-medium text-slate-700 text-nowrap">₹{v.cost.toLocaleString()}</td>
+                                    <td className="px-6 py-4 text-nowrap">
+                                        <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${v.roi >= 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                            {v.roi >= 0 ? '+' : ''}{v.roi}%
+                                        </span>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     );

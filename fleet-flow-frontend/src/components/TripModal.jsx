@@ -77,12 +77,12 @@ const TripModal = ({ isOpen, onClose, onRefresh, trip = null }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
             <motion.div
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden"
+                className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden my-auto"
             >
                 <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                     <div>
@@ -91,7 +91,7 @@ const TripModal = ({ isOpen, onClose, onRefresh, trip = null }) => {
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-2 hover:bg-slate-200 rounded-full transition-colors text-slate-400 hover:text-slate-600"
+                        className="p-2 hover:bg-slate-200 rounded-full transition-colors text-slate-400 hover:text-slate-600 outline-none"
                     >
                         <X size={20} />
                     </button>
@@ -106,7 +106,7 @@ const TripModal = ({ isOpen, onClose, onRefresh, trip = null }) => {
                                 <select
                                     required
                                     disabled={isEdit && trip.status !== 'DRAFT'} // Usually only DRAFT is editable
-                                    className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary-500 transition-all bg-white font-medium text-slate-900"
+                                    className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary-500 transition-all bg-white font-medium text-slate-900 sm:text-sm"
                                     value={formData.vehicleId}
                                     onChange={(e) => {
                                         const v = vehicles.find(v => v._id === e.target.value);
@@ -128,7 +128,7 @@ const TripModal = ({ isOpen, onClose, onRefresh, trip = null }) => {
                                 <select
                                     required
                                     disabled={isEdit && trip.status !== 'DRAFT'}
-                                    className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary-500 transition-all bg-white font-medium text-slate-900"
+                                    className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary-500 transition-all bg-white font-medium text-slate-900 sm:text-sm"
                                     value={formData.driverId}
                                     onChange={(e) => setFormData({ ...formData, driverId: e.target.value })}
                                 >
@@ -141,9 +141,9 @@ const TripModal = ({ isOpen, onClose, onRefresh, trip = null }) => {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-1">
-                            <div className="flex justify-between">
+                            <div className="flex justify-between items-center sm:items-start">
                                 <label className="text-sm font-semibold text-slate-700">Cargo Weight (kg)</label>
                                 {formData.vehicleId && (
                                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">
@@ -157,7 +157,7 @@ const TripModal = ({ isOpen, onClose, onRefresh, trip = null }) => {
                                     required
                                     type="number"
                                     placeholder="e.g. 1200"
-                                    className={`w-full pl-10 pr-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary-500 transition-all font-medium ${formData.cargoWeight && vehicles.find(v => v._id === formData.vehicleId)?.maxCapacity < Number(formData.cargoWeight)
+                                    className={`w-full pl-10 pr-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary-500 transition-all font-medium sm:text-sm ${formData.cargoWeight && vehicles.find(v => v._id === formData.vehicleId)?.maxCapacity < Number(formData.cargoWeight)
                                         ? 'border-red-500 text-red-600 bg-red-50'
                                         : 'border-slate-200 text-slate-900'
                                         }`}
@@ -178,7 +178,7 @@ const TripModal = ({ isOpen, onClose, onRefresh, trip = null }) => {
                                     required
                                     type="number"
                                     placeholder="Auto-filled"
-                                    className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary-500 transition-all font-medium text-slate-900 bg-slate-50"
+                                    className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-primary-500 transition-all font-medium text-slate-900 bg-slate-50 sm:text-sm"
                                     value={formData.startOdometer}
                                     onChange={(e) => setFormData({ ...formData, startOdometer: e.target.value })}
                                 />
@@ -186,11 +186,11 @@ const TripModal = ({ isOpen, onClose, onRefresh, trip = null }) => {
                         </div>
                     </div>
 
-                    <div className="pt-4 flex space-x-3">
+                    <div className="pt-4 flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 px-4 py-2 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-50 transition-colors font-semibold"
+                            className="w-full sm:flex-1 px-4 py-2 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-50 transition-colors font-semibold outline-none sm:text-sm"
                         >
                             Cancel
                         </button>
@@ -202,7 +202,7 @@ const TripModal = ({ isOpen, onClose, onRefresh, trip = null }) => {
                                 !formData.driverId ||
                                 (Number(formData.cargoWeight) > (vehicles.find(v => v._id === formData.vehicleId)?.maxCapacity || 0))
                             }
-                            className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold disabled:opacity-50"
+                            className="w-full sm:flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold disabled:opacity-50 outline-none sm:text-sm"
                         >
                             {loading ? 'Submitting...' : isEdit ? 'Save Changes' : 'Create Draft'}
                         </button>

@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { Plus, Search, Filter, Fuel, DollarSign, Droplets, MoreVertical, MapPin, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Search, Filter, Fuel, IndianRupee, Droplets, MoreVertical, MapPin, Pencil, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../api/api';
 import FuelModal from '../components/FuelModal';
@@ -89,7 +89,7 @@ const DeleteConfirmModal = ({ entry, onConfirm, onCancel }) => {
                 <div>
                     <h3 className="text-lg font-bold text-slate-900">Delete Fuel Log?</h3>
                     <p className="text-sm text-slate-500 mt-1">
-                        Fuel entry for <strong>{entry.vehicle?.name}</strong> (${entry.cost}) will be permanently removed.
+                        Fuel entry for <strong>{entry.vehicle?.name}</strong> (₹{entry.cost}) will be permanently removed.
                     </p>
                 </div>
                 <div className="flex space-x-3 pt-2">
@@ -149,14 +149,14 @@ const FuelLogs = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900">Fuel & Expenses</h1>
-                    <p className="text-slate-500">Track fleet fuel consumption and operating costs</p>
+                    <p className="text-slate-500 text-sm sm:text-base">Track fleet fuel consumption and operating costs</p>
                 </div>
                 <button
                     onClick={() => { setEditingEntry(null); setIsModalOpen(true); }}
-                    className="bg-primary-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-primary-700 transition-colors"
+                    className="w-full sm:w-auto bg-primary-600 text-white px-4 py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-primary-700 transition-colors"
                 >
                     <Plus size={20} />
                     <span>Log Fuel</span>
@@ -177,7 +177,7 @@ const FuelLogs = () => {
             />
 
             {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
                     <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
                         <Droplets size={24} />
@@ -189,43 +189,43 @@ const FuelLogs = () => {
                 </div>
                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
                     <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center text-green-600">
-                        <DollarSign size={24} />
+                        <IndianRupee size={24} />
                     </div>
                     <div>
                         <p className="text-sm font-medium text-slate-500">Total Fuel Cost</p>
-                        <p className="text-2xl font-bold text-slate-900">${totalCost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                        <p className="text-2xl font-bold text-slate-900">₹{totalCost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                     </div>
                 </div>
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4 sm:col-span-2 lg:col-span-1">
                     <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600">
                         <Fuel size={24} />
                     </div>
                     <div>
                         <p className="text-sm font-medium text-slate-500">Avg Price / Liter</p>
-                        <p className="text-2xl font-bold text-slate-900">${avgCostPerLiter.toFixed(2)}</p>
+                        <p className="text-2xl font-bold text-slate-900">₹{avgCostPerLiter.toFixed(2)}</p>
                     </div>
                 </div>
             </div>
 
             {/* Table */}
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-                    <div className="relative">
+                <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="relative w-full sm:w-auto">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                         <input
                             type="text"
                             placeholder="Search fuel logs..."
-                            className="pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500"
+                            className="pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500 w-full"
                         />
                     </div>
-                    <button className="flex items-center space-x-2 text-slate-500 text-sm hover:text-slate-900 transition-colors">
+                    <button className="flex items-center justify-center space-x-2 text-slate-500 text-sm hover:text-slate-900 transition-colors border border-slate-200 sm:border-0 p-2 sm:p-0 rounded-lg">
                         <Filter size={18} />
                         <span>Filters</span>
                     </button>
                 </div>
 
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left">
+                    <table className="w-full text-left min-w-[900px]">
                         <thead className="bg-slate-50 border-b border-slate-100">
                             <tr>
                                 <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Vehicle</th>
@@ -239,18 +239,18 @@ const FuelLogs = () => {
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                             {loading ? (
-                                <tr><td colSpan="7" className="px-6 py-10 text-center text-slate-500 italic">Loading fuel records...</td></tr>
+                                <tr><td colSpan="7" className="px-6 py-10 text-center text-slate-500 italic">Syncing fuel data...</td></tr>
                             ) : logs.length === 0 ? (
                                 <tr><td colSpan="7" className="px-6 py-10 text-center text-slate-500 italic">No fuel entries recorded yet</td></tr>
                             ) : logs.map((log) => (
                                 <tr key={log._id} className="hover:bg-slate-50 transition-colors">
-                                    <td className="px-6 py-4">
+                                    <td className="px-6 py-4 text-nowrap">
                                         <div>
                                             <p className="font-semibold text-slate-900">{log.vehicle?.name || 'Unknown'}</p>
                                             <p className="text-xs font-mono text-slate-500 uppercase">{log.vehicle?.licensePlate || 'N/A'}</p>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4">
+                                    <td className="px-6 py-4 text-nowrap">
                                         {log.trip ? (
                                             <div className="flex items-center space-x-1.5">
                                                 <MapPin size={13} className="text-primary-500" />
@@ -262,21 +262,19 @@ const FuelLogs = () => {
                                             <span className="text-xs text-slate-400 italic">No trip</span>
                                         )}
                                     </td>
-                                    <td className="px-6 py-4">
+                                    <td className="px-6 py-4 text-nowrap">
                                         <div className="flex items-center space-x-1">
                                             <span className="text-sm font-bold text-slate-900">{log.liters.toLocaleString(undefined, { maximumFractionDigits: 1 })}</span>
                                             <span className="text-xs text-slate-400">L</span>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <span className="text-sm font-bold text-slate-900">${log.cost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
+                                    <td className="px-6 py-4 text-nowrap">
+                                        <span className="text-sm font-bold text-slate-900">₹{log.cost.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <span className="text-xs text-slate-500">
-                                            ${(log.cost / log.liters).toFixed(2)}/L
-                                        </span>
+                                    <td className="px-6 py-4 text-nowrap">
+                                        ₹{(log.cost / log.liters).toFixed(2)}/L
                                     </td>
-                                    <td className="px-6 py-4">
+                                    <td className="px-6 py-4 text-nowrap">
                                         <span className="text-sm text-slate-500">{new Date(log.date).toLocaleDateString()}</span>
                                     </td>
                                     <td className="px-6 py-4 text-right">

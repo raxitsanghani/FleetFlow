@@ -214,14 +214,14 @@ const Drivers = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900">Driver Workforce</h1>
-                    <p className="text-slate-500">Manage your qualified personnel and assignments</p>
+                    <p className="text-slate-500 text-sm sm:text-base">Manage your qualified personnel and assignments</p>
                 </div>
                 <button
                     onClick={() => { setEditingDriver(null); setIsModalOpen(true); }}
-                    className="bg-primary-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-primary-700 transition-colors"
+                    className="w-full sm:w-auto bg-primary-600 text-white px-4 py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-primary-700 transition-colors"
                 >
                     <Plus size={20} />
                     <span>Add Driver</span>
@@ -242,82 +242,84 @@ const Drivers = () => {
             />
 
             <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-                    <div className="relative">
+                <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="relative w-full sm:w-auto">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                         <input
                             type="text"
                             placeholder="Search by name or license..."
-                            className="pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500"
+                            className="pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500 w-full"
                         />
                     </div>
-                    <button className="flex items-center space-x-2 text-slate-500 text-sm hover:text-slate-900 transition-colors">
+                    <button className="flex items-center justify-center space-x-2 text-slate-500 text-sm hover:text-slate-900 transition-colors border border-slate-200 sm:border-0 p-2 sm:p-0 rounded-lg">
                         <Filter size={18} />
                         <span>Filters</span>
                     </button>
                 </div>
 
-                <table className="w-full text-left">
-                    <thead className="bg-slate-50 border-b border-slate-100">
-                        <tr>
-                            <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Driver Info</th>
-                            <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">License</th>
-                            <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Category</th>
-                            <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Safety Score</th>
-                            <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Status</th>
-                            <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                        {loading ? (
-                            <tr><td colSpan="6" className="px-6 py-10 text-center text-slate-500 italic">Fetching workforce data...</td></tr>
-                        ) : drivers.length === 0 ? (
-                            <tr><td colSpan="6" className="px-6 py-10 text-center text-slate-500 italic">No operators registered in your system</td></tr>
-                        ) : drivers.map((d) => (
-                            <tr key={d._id} className="hover:bg-slate-50 transition-colors">
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center space-x-3">
-                                        <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-bold border border-primary-200 uppercase text-sm">
-                                            {d.name.charAt(0)}
-                                        </div>
-                                        <div>
-                                            <p className="font-semibold text-slate-900">{d.name}</p>
-                                            <p className="text-xs text-slate-500 capitalize">{d.category?.toLowerCase()}</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <p className="text-sm font-medium text-slate-700">{d.licenseNumber}</p>
-                                    <p className={`text-[10px] font-bold ${new Date(d.licenseExpiry) < new Date() ? 'text-red-500' : 'text-slate-400'}`}>
-                                        Exp: {new Date(d.licenseExpiry).toLocaleDateString()}
-                                    </p>
-                                </td>
-                                <td className="px-6 py-4 text-slate-600">
-                                    <span className="text-xs">{d.category}</span>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center space-x-2">
-                                        <Star size={14} className="text-yellow-500" fill="currentColor" />
-                                        <span className="text-sm font-bold text-slate-900">{d.safetyScore ?? 100}</span>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${statusColors[d.status] || statusColors.OFF_DUTY}`}>
-                                        {d.status?.replace('_', ' ') || 'OFF DUTY'}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <ActionMenu
-                                        driver={d}
-                                        onEdit={handleEdit}
-                                        onDelete={setDeletingDriver}
-                                        onStatusChange={handleStatusChange}
-                                    />
-                                </td>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left min-w-[800px]">
+                        <thead className="bg-slate-50 border-b border-slate-100">
+                            <tr>
+                                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Driver Info</th>
+                                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">License</th>
+                                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Category</th>
+                                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Safety Score</th>
+                                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Status</th>
+                                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                            {loading ? (
+                                <tr><td colSpan="6" className="px-6 py-10 text-center text-slate-500 italic">Fetching workforce data...</td></tr>
+                            ) : drivers.length === 0 ? (
+                                <tr><td colSpan="6" className="px-6 py-10 text-center text-slate-500 italic">No operators registered in your system</td></tr>
+                            ) : drivers.map((d) => (
+                                <tr key={d._id} className="hover:bg-slate-50 transition-colors">
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center space-x-3">
+                                            <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-bold border border-primary-200 uppercase text-sm">
+                                                {d.name.charAt(0)}
+                                            </div>
+                                            <div>
+                                                <p className="font-semibold text-slate-900">{d.name}</p>
+                                                <p className="text-xs text-slate-500 capitalize">{d.category?.toLowerCase()}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <p className="text-sm font-medium text-slate-700">{d.licenseNumber}</p>
+                                        <p className={`text-[10px] font-bold ${new Date(d.licenseExpiry) < new Date() ? 'text-red-500' : 'text-slate-400'}`}>
+                                            Exp: {new Date(d.licenseExpiry).toLocaleDateString()}
+                                        </p>
+                                    </td>
+                                    <td className="px-6 py-4 text-slate-600">
+                                        <span className="text-xs">{d.category}</span>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center space-x-2">
+                                            <Star size={14} className="text-yellow-500" fill="currentColor" />
+                                            <span className="text-sm font-bold text-slate-900">{d.safetyScore ?? 100}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${statusColors[d.status] || statusColors.OFF_DUTY}`}>
+                                            {d.status?.replace('_', ' ') || 'OFF DUTY'}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <ActionMenu
+                                            driver={d}
+                                            onEdit={handleEdit}
+                                            onDelete={setDeletingDriver}
+                                            onStatusChange={handleStatusChange}
+                                        />
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     );
